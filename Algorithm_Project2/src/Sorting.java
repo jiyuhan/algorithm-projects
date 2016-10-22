@@ -139,6 +139,19 @@ public class Sorting {
     }
 
     /**
+     * <b>Description:</b> This method sorts an array using merge sort, but
+     * when the sub-arrays have less than 32 elements, it switches to insertion.
+     * @param low   starting place in a (sub)array
+     * @param high  ending place in a (sub)array
+     */
+
+    private static void mergeSort2(int low, int high) {
+
+        /* TODO: please implement a method that runs as the descriptin above. */
+
+    }
+
+    /**
      * <b>Description:</b> This method merges two array in order.
      * From merge arr[low, middle-1] and arr[middle, high-1] into arr[low, high-1].
      * @param low       as the beginning point in the first sub-array
@@ -258,6 +271,19 @@ public class Sorting {
     }
 
     /**
+     * <b>Description:</b> This method runs the quick sort
+     * first and then when the sub-array has less than 32
+     * elements, it runs in insertion sort.
+     * @param low   starting point in an array
+     * @param high  ending point in an array
+     */
+
+    private static void quickSort2 (int low, int high) {
+        /*TODO: this quicksort should be implemented as description above*/
+    }
+
+
+    /**
      * <b>Description:</b>This method is a demo program. It asks user the number
      * of wanted elements, then sort them in heap, merge, natural merge,
      * and quick sort.
@@ -330,6 +356,17 @@ public class Sorting {
         finish = System.currentTimeMillis();
         if (size < 101) printArray("out");
         System.out.println("insert sort on " + input + " input: " + (finish-start) + " milliseconds.");
+    }
+
+    /**
+     * <b>Description</b>This is a method that compares four different sorting algorithms
+     * (mergeSort, mergeSort2, quickSort, quickSort2) by calculating the
+     * time spent while generating and sorting 100 random arrays of size
+     * 10,000,000.
+     */
+
+    public static void task1 () {
+        /*TODO: please implement this method follow the description above.*/
     }
 
     public static void main(String[] args) {
