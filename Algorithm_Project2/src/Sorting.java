@@ -143,12 +143,13 @@ public class Sorting {
      * when the sub-arrays have less than 32 elements, it switches to insertion.
      * @param low   starting place in a (sub)array
      * @param high  ending place in a (sub)array
+     * @author      Thomas (Jiyu) Han
      */
 
     private static void mergeSort2(int low, int high) {
-
         /* TODO: please implement a method that runs as the descriptin above. */
-
+        if (high - low >= 32) mergeSort(low, high); // the length of the subarray is greater than 32
+        else insertSort(low, high);
     }
 
     /**
