@@ -477,10 +477,10 @@ public class Sorting {
      * time spent while generating and sorting 100 random arrays of size
      * 10,000,000.<br><br>
      * <b>Test run result:</b><br>
-     * <i>merge sort</i> 106,764 ms.<br>
-     * <i>merge sort II</i> 98,823 ms. (-8s  improvement)<br>
-     * <i>quick sort</i> 81,978 ms.<br>
-     * <i>quick sort II</i> 71,078 ms. (-11s improvement)<br><br>
+     * <i>merge sort</i> 209,117 ms.<br>
+     * <i>merge sort II</i> 189,962 ms. (-20s  improvement)<br>
+     * <i>quick sort</i> 146,437 ms.<br>
+     * <i>quick sort II</i> 127,533 ms. (-19s improvement)<br><br>
      * <b>Conclusion:</b> when the size of an sub-array is less than 32, insertion sort
      * works better. However, it's not a significant improvement on running speed.
      */
