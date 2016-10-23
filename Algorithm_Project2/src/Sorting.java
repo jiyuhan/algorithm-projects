@@ -391,7 +391,7 @@ public class Sorting {
             }
         }
         /*easy way to test out if it's functioning*/
-        else System.out.format("It's sorted: %d : %d \n", low, high);
+        //else System.out.format("It's sorted: %d : %d \n", low, high);
     }
 
     /**
@@ -693,7 +693,7 @@ public class Sorting {
 
         for(int i=0; i<size; i++) arrCopy[i] = size-i;
         demo1("reversely sorted");*/
-        //task1("task 1");
+        task1("task 1");
         task2("task 2");
     }
 }
