@@ -1,9 +1,5 @@
-import com.sun.org.apache.regexp.internal.RE;
-
 import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.util.Random;
-
 
 /**
  * <h1>This is a class that creates an array and then sort the array by implementing
@@ -12,7 +8,6 @@ import java.util.Random;
  * @author multiple authors
  */
 public class Sorting {
-
     /**
      * The actual array of integers.
      */
@@ -68,11 +63,11 @@ public class Sorting {
     /**
      * <b>Description:</b> This method will check if an array is already sorted,
      * in order to "save time".
-     * @param low   the start of an (sub)array
-     * @param high  the end of an (sub)array
-     * @return      the bool will indicate if the array is sorted
+     *
+     * @param low  the start of an (sub)array
+     * @param high the end of an (sub)array
+     * @return the bool will indicate if the array is sorted
      */
-
     private static boolean isSorted(int low, int high) {
         /*TODO: please write a method to check if a sub-array is sorted*/
         for (int i = low; i < high; i++) {
@@ -87,11 +82,9 @@ public class Sorting {
      * @param left  starting point of one subarray/array
      * @param right end of an array
      */
-
     private static void insertSort(int left, int right) {
         // insertSort the sub-array arr[left, right]
         int i, j;
-
         for (i = left + 1; i <= right; i++) {
             int temp = arr[i];           // store a[i] in temp
             j = i;                       // start shifts at i
@@ -112,7 +105,6 @@ public class Sorting {
         insertSort(0, size - 1);
     } // end insertionSort()
 
-
     /**
      * <b>Description:</b> This adjusts subtree to rotate the MAX to the root.
      *
@@ -125,10 +117,8 @@ public class Sorting {
         int max = i;
         int left = 2 * i + 1;
         int right = 2 * i + 2;
-
         if (left < n && arr[left] > arr[max]) max = left;
         if (right < n && arr[right] > arr[max]) max = right;
-
         if (max != i) {  // node i is not maximal
             exchangeItems(i, max);
             maxHeapify(max, n);
@@ -141,7 +131,6 @@ public class Sorting {
     private static void heapsort() {
         // Build an in-place bottom up max heap
         for (int i = size / 2; i >= 0; i--) maxHeapify(i, size);
-
         for (int i = size - 1; i > 0; i--) {
             exchangeItems(0, i);       // move max from heap to position i.
             maxHeapify(0, i);     // adjust heap
@@ -176,7 +165,6 @@ public class Sorting {
      * @param low  starting place in a (sub)array
      * @param high ending place in a (sub)array
      */
-
     private static void mergeSort2(int low, int high) {
         /* TODO: please implement a method that runs as the descriptin above. */
         if (high - low >= 31) {
@@ -184,8 +172,7 @@ public class Sorting {
             mergeSort2(low, middlePoint);
             mergeSort2(middlePoint, high);
             merge(low, middlePoint, high);
-        }
-        else insertSort(low, high -1);
+        } else insertSort(low, high - 1);
     }
 
     /**
@@ -197,25 +184,20 @@ public class Sorting {
      *               the beginning point in the second sub-array
      * @param high   the ending point of the second sub-array
      */
-
     private static void merge(int low, int middle, int high) {
         // merge arr[low, middle-1] and arr[middle, high-1] into arr[low, high-1]
-
         // Copy first part into the arrCopy array
         /*for (int i = low; i < middle; i++) mergeArr[i] = arr[i];*/
-        System.arraycopy(arr, low, mergeArr, low, (middle-low));
-
+        System.arraycopy(arr, low, mergeArr, low, (middle - low));
         int i = low;
         int j = middle;
         int k = low;
-
         // Copy the smallest values from either the left or the right side back        // to the original array
         while (i < middle && j < high)
             if (mergeArr[i] <= arr[j])
                 arr[k++] = mergeArr[i++];
             else
                 arr[k++] = arr[j++];
-
         // Copy the rest of the left part of the array into the original array
         while (i < middle) arr[k++] = mergeArr[i++];
     }
@@ -227,32 +209,26 @@ public class Sorting {
      */
     private static void naturalMergeSort() {
         int run[], i, j, s, t, m;
-
         run = new int[size / 2];
-
         // Step 1: identify runs from the input array arr[]
         i = m = 1;
         run[0] = 0;
         while (i < size) {
             if (arr[i - 1] > arr[i])
                 if (run[m - 1] + 1 == i) {     // make sure each run has at least two
-
                     j = i + 1;
                     s = 0;
                     while (j < size && arr[j - 1] >= arr[j]) j++;     // not stable
-
                     // reverse arr[i-1, j-1];
                     s = i - 1;
                     t = j - 1;
                     while (s < t) exchangeItems(s++, t--);
-
                     i = j;
                 } else
                     run[m++] = i++;
             else i++;
         }
-
-        // Step 2: merge runs bottom-up into one run                                                                       
+        // Step 2: merge runs bottom-up into one run
         t = 1;
         while (t < m) {
             s = t;
@@ -264,7 +240,6 @@ public class Sorting {
             }
             if (i + s < m) merge(run[i], run[i + s], size);
         }
-
     }
 
     /**
@@ -278,20 +253,16 @@ public class Sorting {
      */
     private static void quickSort(int low, int high) {
         int i = low, j = high;
-
         // Get the pivot element from the middle of the list
         int pivot = arr[(high + low) / 2];
-
         // Divide into two lists
         while (i <= j) {
             // If the current value from the left list is smaller then the pivot
             // element then get the next element from the left list
             while (arr[i] < pivot) i++;
-
             // If the current value from the right list is larger then the pivot
             // element then get the next element from the right list
             while (arr[j] > pivot) j--;
-
             // If we have found a value in the left list which is larger than
             // the pivot element and if we have found a value in the right list
             // which is smaller then the pivot element then we exchange the
@@ -306,12 +277,10 @@ public class Sorting {
                 j--;
             }
         }
-
         // Recursion
         if (low < j) quickSort(low, j);
         if (i < high) quickSort(i, high);
     }
-
 
     /**
      * <b>Description:</b> This method runs the quick sort
@@ -321,15 +290,11 @@ public class Sorting {
      * @param low  starting point in an array
      * @param high ending point in an array
      */
-
     private static void quickSort2(int low, int high) {
         /*TODO: this quick sort should be implemented as description above*/
-
         /*recursive solution*/
         int i = low, j = high;
-
         int pivot = arr[(high + low) / 2];
-
         while (i <= j) {
             while (arr[i] < pivot) i++;
             while (arr[j] > pivot) j--;
@@ -342,7 +307,6 @@ public class Sorting {
                 j--;
             }
         }
-
         // Recursion
         if (low < j) {
             if (j - low >= 32) quickSort2(low, j);
@@ -357,13 +321,13 @@ public class Sorting {
     /**
      * <b>Description:</b> This quick sort checks if the sub-array is sorted everytime
      * before it actually sorts that sub-array.
-     * @param low   the starting point of a sub-array
-     * @param high  the ending point of a sub-array.
+     *
+     * @param low  the starting point of a sub-array
+     * @param high the ending point of a sub-array.
      */
-    private static void quickSort3 (int low, int high) {
+    private static void quickSort3(int low, int high) {
         /*TODO: this quick sort should be implemented as description above*/
-
-        if(!isSorted(low, high)) {
+        if (!isSorted(low, high)) {
             /*recursive solution*/
             int i = low, j = high;
             int pivot = arr[(high + low) / 2];
@@ -379,7 +343,6 @@ public class Sorting {
                     j--;
                 }
             }
-
             // Recursion
             if (low < j) {
                 if (j - low >= 32) quickSort3(low, j);
@@ -391,7 +354,7 @@ public class Sorting {
             }
         }
         /*easy way to test out if it's functioning*/
-        else System.out.format("It's sorted: %d : %d \n", low, high);
+        //else System.out.format("It's sorted: %d : %d \n", low, high);
     }
 
     /**
@@ -405,11 +368,9 @@ public class Sorting {
      */
     private static void demo1(String input) {
         // demonstration of sorting algorithms on random input
-
         long start, finish;
         System.out.println();
-
-        // Heap sort      
+        // Heap sort
         System.arraycopy(arrCopy, 0, arr, 0, size);
         if (size < 101) printArray("in");
         start = System.currentTimeMillis();
@@ -417,7 +378,6 @@ public class Sorting {
         finish = System.currentTimeMillis();
         if (size < 101) printArray("out");
         System.out.println("heap sort on " + input + " input: " + (finish - start) + " milliseconds.");
-
         // Merge sort
         System.arraycopy(arrCopy, 0, arr, 0, size);
         if (size < 101) printArray("in");
@@ -426,7 +386,6 @@ public class Sorting {
         finish = System.currentTimeMillis();
         if (size < 101) printArray("out");
         System.out.println("merge sort on " + input + " input: " + (finish - start) + " milliseconds.");
-
         // Natural Merge sort
         System.arraycopy(arrCopy, 0, arr, 0, size);
         if (size < 101) printArray("in");
@@ -435,7 +394,6 @@ public class Sorting {
         finish = System.currentTimeMillis();
         if (size < 101) printArray("out");
         System.out.println("natural merge sort on " + input + " input: " + (finish - start) + " milliseconds.");
-
         // Quick sort
         System.arraycopy(arrCopy, 0, arr, 0, size);
         if (size < 101) printArray("in");
@@ -453,14 +411,10 @@ public class Sorting {
      *
      * @param input a descriptor for the array
      */
-
     public static void demo2(String input) {
         // demonstration of sorting algorithms on nearly sorted input
-
         long start, finish;
-
         demo1(input);
-
         // Insert sort on nearly-sorted array
         System.arraycopy(arrCopy, 0, arr, 0, size);
         if (size < 101) printArray("in");
@@ -484,7 +438,6 @@ public class Sorting {
      * <b>Conclusion:</b> when the size of an sub-array is less than 32, insertion sort
      * works better. However, it's not a significant improvement on running speed.
      */
-
     private static void task1(String input) {
         /*TODO: please implement this method follow the description above.*/
         long start = 0, finish = 0;
@@ -494,22 +447,18 @@ public class Sorting {
         long merge2RunningTimeSum = 0;
         long quickRunningTimeSum = 0;
         long quick2RunningTimeSum = 0;
-
         size = 10000000;
-
         System.out.println("======== Task 1 ========");
         randomGenerator = new Random();
-        for(int i = 0; i < REPEATTIMES; i++) {
+        for (int i = 0; i < REPEATTIMES; i++) {
             // create array
             arr = new int[size];
             arrCopy = new int[size];
             mergeArr = new int[size];
-
             // fill array
             random = size * 10;
             for (int j = 0; j < size; j++)
                 arr[j] = arrCopy[j] = randomGenerator.nextInt(random);
-
             /*for (int j = 0; j < size; j++) arr[j] = arrCopy[j];*/
             // Merge sort
             System.arraycopy(arrCopy, 0, arr, 0, size);
@@ -519,7 +468,6 @@ public class Sorting {
             finish = System.currentTimeMillis();
             if (size < 101) printArray("out");
             mergeRunningTimeSum += (finish - start);
-
             // Merge sort 2
             System.arraycopy(arrCopy, 0, arr, 0, size);
             if (size < 101) printArray("in");
@@ -528,7 +476,6 @@ public class Sorting {
             finish = System.currentTimeMillis();
             if (size < 101) printArray("out");
             merge2RunningTimeSum += (finish - start);
-
             // Quick sort
             System.arraycopy(arrCopy, 0, arr, 0, size);
             if (size < 101) printArray("in");
@@ -537,7 +484,6 @@ public class Sorting {
             finish = System.currentTimeMillis();
             if (size < 101) printArray("out");
             quickRunningTimeSum += (finish - start);
-
             // Quick sort 2
             System.arraycopy(arrCopy, 0, arr, 0, size);
             if (size < 101) printArray("in");
@@ -547,7 +493,6 @@ public class Sorting {
             if (size < 101) printArray("out");
             quick2RunningTimeSum += (finish - start);
         }
-
         //print all the running time for the four sorting algorithms we used.
         System.out.println("merge sort on " + input + " input: " + mergeRunningTimeSum + " milliseconds.");
         System.out.println("merge sort 2 on " + input + " input: " + merge2RunningTimeSum + " milliseconds.");
@@ -561,10 +506,10 @@ public class Sorting {
      * and uses three different sorting algorithms mentioned above.<br>
      * <b>Conclusion:</b> I used size of 10 arrays, and quick3 is slower than the other two, but when the size
      * is increased to 10,000, there's a significantly better efficiency for quick3.
+     *
      * @param input it's a keyword for distinguishing this task, and will be printed everytime a runtime
      *              is printed.
      */
-
     private static void task2(String input) {
         /*TODO: please implement this method follow the description above.*/
         long start = 0, finish = 0;
@@ -573,32 +518,29 @@ public class Sorting {
         long quickRunningTimeSum = 0;
         long quick2RunningTimeSum = 0;
         long quick3RunningTimeSum = 0;
-
         // initialize size to 10,000,000 elements
         size = 10000000;
         //size = 10000;
-
         System.out.println("======== Task 2 ========");
-        for(int k = 1; k <= 3; k++) {
+        for (int k = 1; k <= 3; k++) {
             for (int i = 0; i < REPEATTIMES; i++) {
                 // fill array
-                switch(k) {
+                switch (k) {
                     case 1://a new random array
                         // create array
                         arr = new int[size];
                         arrCopy = new int[size];
                         mergeArr = new int[size];
-
                         randomGenerator = new Random();
                         random = size * 10;
                         for (int j = 0; j < size; j++)
                             arrCopy[j] = randomGenerator.nextInt(random);
                         break;
                     case 2: // using a sorted array
-                        for(int j = 0; j < size; j++) arrCopy[j] = j + 1;
+                        for (int j = 0; j < size; j++) arrCopy[j] = j + 1;
                         break;
                     case 3: // a reverse sorted array
-                        for(int j = 0; j < size; j++) arrCopy[j] = size-j;
+                        for (int j = 0; j < size; j++) arrCopy[j] = size - j;
                         break;
                 }
                 // Quick sort
@@ -609,7 +551,6 @@ public class Sorting {
                 finish = System.currentTimeMillis();
                 if (size < 101) printArray("out");
                 quickRunningTimeSum += (finish - start);
-
                 // Quick sort 2
                 System.arraycopy(arrCopy, 0, arr, 0, size);
                 if (size < 101) printArray("in");
@@ -618,7 +559,6 @@ public class Sorting {
                 finish = System.currentTimeMillis();
                 if (size < 101) printArray("out");
                 quick2RunningTimeSum += (finish - start);
-
                 // Quick sort 3
                 System.arraycopy(arrCopy, 0, arr, 0, size);
                 if (size < 101) printArray("in");
@@ -657,31 +597,23 @@ public class Sorting {
     }
 
     public static void main(String[] args) {
-
         /*read = new BufferedReader(new InputStreamReader(System.in));
-
         randomGenerator = new Random();
-
         try {
             System.out.print("Please enter the array size : ");
             size = Integer.parseInt(read.readLine());
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-
         // create array
         arr = new int[size];
         arrCopy = new int[size];
         mergeArr = new int[size];
-
         // fill array
         random = size * 10;
         for (int i = 0; i < size; i++)
             arr[i] = arrCopy[i] = randomGenerator.nextInt(random);*/
-
             /*demo1("random");*/
-
-
         // arr[0..size-1] is already sorted. We randomly swap 100 pairs to make it nearly-sorted.
         /*for (int i = 0; i < 100; i++) {
             int j  = randomGenerator.nextInt(size);
@@ -690,10 +622,9 @@ public class Sorting {
         }
         for(int i=0; i<size; i++) arrCopy[i] = arr[i];
         demo2("nearly sorted");
-
         for(int i=0; i<size; i++) arrCopy[i] = size-i;
         demo1("reversely sorted");*/
-        //task1("task 1");
+        task1("task 1");
         task2("task 2");
     }
 }
