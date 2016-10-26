@@ -60,6 +60,12 @@ public class Sorting {
         arr[j] = t;
     }
 
+    private static void exchangeItemsArrCopy(int i, int j) {
+        int t = arrCopy[i];
+        arrCopy[i] = arrCopy[j];
+        arrCopy[j] = t;
+    }
+
     /**
      * <b>Description:</b> This method will check if an array is already sorted,
      * in order to "save time".
@@ -282,44 +288,71 @@ public class Sorting {
         if (i < high) quickSort(i, high);
     }
 
+
     /**
      * <b>Description:</b> This method runs the quick sort
      * first and then when the sub-array has less than 32
-     * elements, it runs in insertion sort.
+     * elements, it runs in insertion sort. It picks the
+     * pivot depending on which method it's using.
      *
      * @param low  starting point in an array
      * @param high ending point in an array
+     * @param pivotSelectionMethod 2 for the method itself,
+     *                             4 for quickSort4,
+     *                             5 for quickSort5.
      */
-    private static void quickSort2(int low, int high) {
+    private static void quickSort2(int low, int high, int pivotSelectionMethod) {
         /*TODO: this quick sort should be implemented as description above*/
         /*recursive solution*/
         int i = low, j = high;
-        int pivot = arr[(high + low) / 2];
+        int pivot = 0;
+
+        if(high - low >= 3) {
+            switch (pivotSelectionMethod) {
+                case 2:
+                    pivot = arr[(high + low) / 2]; // it picks one, and that's it
+                    break;
+                case 4:
+                    if ((high - low) >= 3) {
+                        pivot = quickSort4(low, high); // it picks 3 pivots and choose the median
+                    } else pivot = arr[(high + low) / 2];
+                    break;
+                case 5:
+                    if((high - low) >= 9) {
+                        pivot = quickSort5(low, high); // it picks 9 pivots and choose the median
+                    } else pivot = arr[(high + low) / 2];
+                    break;
+                default: // by default, it picks one, and that's it
+                    pivot = arr[(high + low) / 2];
+                    break;
+            }
+        }
+
         while (i <= j) {
-            while (arr[i] < pivot) i++;
             while (arr[j] > pivot) j--;
-            if (i == j) {
-                i++;
+            while (arr[i] < pivot) i++;
+            if (i == j) { // notice the order here is slightly different from quickSort's to avoid IDE warnings
                 j--;
+                i++;
             } else if (i < j) {
                 exchangeItems(i, j);
-                i++;
                 j--;
+                i++;
             }
         }
         // Recursion
         if (low < j) {
-            if (j - low >= 32) quickSort2(low, j);
+            if (j - low >= 32) quickSort2(low, j, pivotSelectionMethod);
             else insertSort(low, j); //uses insertion sort when sub-array has less than 32 items
         }
         if (i < high) {
-            if (high - i >= 32) quickSort2(i, high);
+            if (high - i >= 32) quickSort2(i, high, pivotSelectionMethod);
             else insertSort(i, high); //uses insertion sort when sub-array has less than 32 items
         }
     }
 
     /**
-     * <b>Description:</b> This quick sort checks if the sub-array is sorted everytime
+     * <b>Description:</b> This quick sort checks if the sub-array is sorted every time
      * before it actually sorts that sub-array.
      *
      * @param low  the starting point of a sub-array
@@ -355,6 +388,65 @@ public class Sorting {
         }
         /*easy way to test out if it's functioning*/
         //else System.out.format("It's sorted: %d : %d \n", low, high);
+    }
+
+    /**
+     * <b>Requirement from Prof.:</b> One uses the median of three elements,
+     * i.e., first, middle, and last, as pivot for partition.
+     * @param low starting point of the to-be-sorted array
+     * @param high end point of the sorting array
+     * @return pivot value we want
+     */
+    private static int quickSort4(int low, int high) {
+        /*TODO: this quick sort should be implemented as description above*/
+        int[] pivot = new int[3];
+        pivot[0] = arr[low] ;
+        pivot[1] = arr[(high + low) /2];
+        pivot[2] = arr[high];
+        int i, j;
+        for (i = 0; i <= 2; i++) {
+            int temp = pivot[i];           // store a[i] in temp
+            j = i;                       // start shifts at i
+            // until one is smaller,
+            while (j > 0 && pivot[j - 1] >= temp) {
+                pivot[j] = pivot[j - 1];        // shift item to right
+                --j;                      // go left one position
+            }
+            pivot[j] = temp;              // insert stored item
+        }  // end for
+        return pivot[1];
+    }
+
+    /**
+     * <b>Words from the Prof.:</b> One first selects 9 elements equally spreading out in the array,
+     * inclduing the first and the last element. Compute the median of the first three,
+     * the median of the next three, and the median of the last three.
+     * Then use the median of three medians as pivot.
+     * @param low starting point of the to-be-sorted array
+     * @param high end point of the sorting array
+     * @return pivot value we want
+     */
+    private static int quickSort5 (int low, int high) {
+        /*TODO: this quick sort should be implemented as description above*/
+        int[] piv = new int[9];
+        int divisible = (high - low + 1) - ((high - low + 1) % 9);
+        int aPiece = divisible / 9;
+        for (int i = 0; i < 8; i++) {
+            piv[i] = arr[low + aPiece * i];
+        }
+        piv[8] = arr[high];
+        int i, j;
+        for (i = 0; i < 9; i++) {
+            int temp = piv[i];           // store a[i] in temp
+            j = i;                       // start shifts at i
+            // until one is smaller,
+            while (j > 0 && piv[j - 1] >= temp) {
+                piv[j] = piv[j - 1];        // shift item to right
+                --j;                      // go left one position
+            }
+            piv[j] = temp;              // insert stored item
+        }  // end for
+        return piv[4];
     }
 
     /**
@@ -449,6 +541,8 @@ public class Sorting {
         long quick2RunningTimeSum = 0;
         size = 10000000;
         System.out.println("======== Task 1 ========");
+        System.out.println("Because it has 10,000,000 elements in 100 arrays,\n" +
+                "it could take up to 7 minutes.");
         randomGenerator = new Random();
         for (int i = 0; i < REPEATTIMES; i++) {
             // create array
@@ -488,7 +582,7 @@ public class Sorting {
             System.arraycopy(arrCopy, 0, arr, 0, size);
             if (size < 101) printArray("in");
             start = System.currentTimeMillis();
-            quickSort2(0, size - 1);
+            quickSort2(0, size - 1, 2); // 2 means the pivot is picked at the middle of the array
             finish = System.currentTimeMillis();
             if (size < 101) printArray("out");
             quick2RunningTimeSum += (finish - start);
@@ -506,11 +600,8 @@ public class Sorting {
      * and uses three different sorting algorithms mentioned above.<br>
      * <b>Conclusion:</b> I used size of 10 arrays, and quick3 is slower than the other two, but when the size
      * is increased to 10,000, there's a significantly better efficiency for quick3.
-     *
-     * @param input it's a keyword for distinguishing this task, and will be printed everytime a runtime
-     *              is printed.
      */
-    private static void task2(String input) {
+    private static void task2() {
         /*TODO: please implement this method follow the description above.*/
         long start = 0, finish = 0;
         final int REPEATTIMES = 10;// this shows how many arrays are going to be generated.
@@ -523,6 +614,19 @@ public class Sorting {
         //size = 10000;
         System.out.println("======== Task 2 ========");
         for (int k = 1; k <= 3; k++) {
+            quickRunningTimeSum = 0;
+            quick2RunningTimeSum = 0;
+            quick3RunningTimeSum = 0;
+            switch(k) {
+                case 1:
+                    System.out.println("======== Random array ========");
+                    break;
+                case 2:
+                    System.out.println("======== Sorted array ========");
+                    break;
+                case 3:
+                    System.out.println("======== Reverse sorted array ========");
+            }
             for (int i = 0; i < REPEATTIMES; i++) {
                 // fill array
                 switch (k) {
@@ -555,7 +659,7 @@ public class Sorting {
                 System.arraycopy(arrCopy, 0, arr, 0, size);
                 if (size < 101) printArray("in");
                 start = System.currentTimeMillis();
-                quickSort2(0, size - 1);
+                quickSort2(0, size - 1, 2); // 2 means pivot picked at the middle of the array
                 finish = System.currentTimeMillis();
                 if (size < 101) printArray("out");
                 quick2RunningTimeSum += (finish - start);
@@ -570,11 +674,12 @@ public class Sorting {
             }
             switch (k) {
                 case 1:
-                    System.out.println("quick sort on " + input + " input: " + quickRunningTimeSum + " milliseconds.");
                     System.out.println
-                            ("quick sort 2 on " + input + " input: " + quick2RunningTimeSum + " milliseconds.");
+                            ("quick sort on random arrays input: " + quickRunningTimeSum + " milliseconds.");
                     System.out.println
-                            ("quick sort 3 on " + input + " input: " + quick3RunningTimeSum + " milliseconds.");
+                            ("quick sort 2 on random arrays input: " + quick2RunningTimeSum + " milliseconds.");
+                    System.out.println
+                            ("quick sort 3 on random arrays input: " + quick3RunningTimeSum + " milliseconds.");
                     break;
                 case 2:
                     System.out.println
@@ -592,6 +697,409 @@ public class Sorting {
                     System.out.println
                             ("quick sort 3 on reverse sorted input: " + quick3RunningTimeSum + " milliseconds.");
                     break;
+            }
+        }
+    }
+
+    /**
+     *
+     */
+    private static void task3() {
+        /*TODO: please implement this method follow the description above.*/
+        long start = 0, finish = 0;
+        final int REPEATTIMES = 10;// this shows how many arrays are going to be generated.
+        System.out.println();
+        long heapRunningTimeSum = 0;
+        long quickRunningTimeSum = 0;
+        long quick3RunningTimeSum = 0;
+        long quick4RunningTimeSum = 0;
+        long quick5RunningTimeSum = 0;
+        long naturalRunningTimeSum = 0;
+
+        // initialize size to 10,000,000 elements
+        //size = 10000000;
+        //size = 10; //testing numbers
+        size = 10000000; //testing numbers
+
+        System.out.println("======== Task 3 ========");
+        for (int k = 1; k <= 3; k++) {
+            heapRunningTimeSum = 0;
+            quickRunningTimeSum = 0;
+            quick3RunningTimeSum = 0;
+            quick4RunningTimeSum = 0;
+            quick5RunningTimeSum = 0;
+            naturalRunningTimeSum = 0;
+            switch(k) {
+                case 1:
+                    System.out.println("======== Random array ========");
+                    break;
+                case 2:
+                    System.out.println("======== Reverse sorted array ========");
+                    break;
+                case 3:
+                    System.out.println("======== Organ-pipe shaped array ========");
+                    break;
+            }
+            for (int i = 0; i < REPEATTIMES; i++) {
+                // fill array
+                switch (k) {
+                    case 1://a new random array
+                        // create array
+
+                        arr = new int[size];
+                        arrCopy = new int[size];
+                        mergeArr = new int[size];
+                        randomGenerator = new Random();
+                        random = size * 10;
+                        for (int j = 0; j < size; j++)
+                            arrCopy[j] = randomGenerator.nextInt(random);
+                        break;
+                    case 2: // a reverse sorted array
+                        for (int j = 0; j < size; j++) arrCopy[j] = size - j;
+                        break;
+                    case 3: // organ-pipe shaped array
+                        // create array
+                        arr = new int[size];
+                        arrCopy = new int[size];
+                        mergeArr = new int[size];
+                        randomGenerator = new Random();
+                        random = size * 10;
+                        //if(size % 2 == 0) \\
+                        /* I was going to check for odd/even array sizes,
+                         * but I found that natural merge sort has some design-related
+                         * problems with odd numbers. Since that method was given by the prof,
+                         * I decided to skip checking odd/even sizes, and use even numbers,
+                         * in this case.
+                         */
+                        for (int j = 0; j < size/2; j++) {
+                            arrCopy[j] = size / 2 - j;
+                            arrCopy[size - 1 - j] = size / 2 - j;
+                        }
+                        break;
+                }
+                // heap sort
+                System.arraycopy(arrCopy, 0, arr, 0, size);
+                if (size < 101) printArray("in");
+                start = System.currentTimeMillis();
+                heapsort();
+                finish = System.currentTimeMillis();
+                if (size < 101) printArray("out");
+                heapRunningTimeSum += (finish - start);
+                /*System.out.println
+                        ("heap sort on organ-pipe shaped arrays input: " + (finish - start) + " milliseconds.");*/
+                // Quick sort
+                System.arraycopy(arrCopy, 0, arr, 0, size);
+                if (size < 101) printArray("in");
+                start = System.currentTimeMillis();
+                quickSort(0, size - 1);
+                finish = System.currentTimeMillis();
+                if (size < 101) printArray("out");
+                quickRunningTimeSum += (finish - start);
+                // Quick sort 3
+                System.arraycopy(arrCopy, 0, arr, 0, size);
+                if (size < 101) printArray("in");
+                start = System.currentTimeMillis();
+                quickSort3(0, size - 1);
+                finish = System.currentTimeMillis();
+                if (size < 101) printArray("out");
+                quick3RunningTimeSum += (finish - start);
+                // Quick sort 4
+                System.arraycopy(arrCopy, 0, arr, 0, size);
+                if (size < 101) printArray("in");
+                start = System.currentTimeMillis();
+                quickSort2(0, size - 1, 4); // 4 means it picks three pivots then gets the best one (median)
+                finish = System.currentTimeMillis();
+                if (size < 101) printArray("out");
+                quick4RunningTimeSum += (finish - start);
+                // Quick sort 5
+                System.arraycopy(arrCopy, 0, arr, 0, size);
+                if (size < 101) printArray("in");
+                start = System.currentTimeMillis();
+                quickSort2(0, size - 1, 5); // 5 means it picks 9 pivots then gets the best one (median)
+                finish = System.currentTimeMillis();
+                if (size < 101) printArray("out");
+                quick5RunningTimeSum += (finish - start);
+                // Natural merge sort
+                System.arraycopy(arrCopy, 0, arr, 0, size);
+                if (size < 101) printArray("in");
+                start = System.currentTimeMillis();
+                naturalMergeSort();
+                finish = System.currentTimeMillis();
+                if (size < 101) printArray("out");
+                naturalRunningTimeSum += (finish - start);
+            }
+            switch (k) {
+                case 1:
+                    System.out.println
+                            ("heap sort on random arrays input: " + heapRunningTimeSum + " milliseconds.");
+                    System.out.println
+                            ("quick sort on random arrays input: " + quickRunningTimeSum + " milliseconds.");
+                    System.out.println
+                            ("quick sort 3 on random arrays input: " + quick3RunningTimeSum + " milliseconds.");
+                    System.out.println
+                            ("quick sort 4 on random arrays input: " + quick4RunningTimeSum + " milliseconds.");
+                    System.out.println
+                            ("quick sort 5 on random arrays input: " + quick5RunningTimeSum + " milliseconds.");
+                    System.out.println
+                            ("natural merge sort on random arrays input: " + naturalRunningTimeSum + " milliseconds.");
+                    break;
+                case 2:
+                    System.out.println
+                            ("heap sort on reversely sorted arrays input: " + heapRunningTimeSum + " milliseconds.");
+                    System.out.println
+                            ("quick sort on reversely sorted arrays input: " + quickRunningTimeSum + " milliseconds.");
+                    System.out.println
+                            ("quick sort 3 on reversely sorted arrays input: " + quick3RunningTimeSum + " milliseconds.");
+                    System.out.println
+                            ("quick sort 4 on reversely sorted arrays input: " + quick4RunningTimeSum + " milliseconds.");
+                    System.out.println
+                            ("quick sort 5 on reversely sorted arrays input: " + quick5RunningTimeSum + " milliseconds.");
+                    System.out.println
+                            ("natural merge sort on reversely sorted arrays input: " + naturalRunningTimeSum + " milliseconds.");
+                    break;
+                case 3:
+                    System.out.println
+                            ("heap sort on organ-pipe shaped arrays input: " + heapRunningTimeSum + " milliseconds.");
+                    System.out.println
+                            ("quick sort on organ-pipe shaped arrays input: " + quickRunningTimeSum + " milliseconds.");
+                    System.out.println
+                            ("quick sort 3 on organ-pipe shaped arrays input: " + quick3RunningTimeSum + " milliseconds.");
+                    System.out.println
+                            ("quick sort 4 on organ-pipe shaped arrays input: " + quick4RunningTimeSum + " milliseconds.");
+                    System.out.println
+                            ("quick sort 5 on organ-pipe shaped arrays input: " + quick5RunningTimeSum + " milliseconds.");
+                    System.out.println
+                            ("natural merge sort on organ-pipe shaped arrays input: " + naturalRunningTimeSum + " milliseconds.");
+                    break;
+            }
+        }
+    }
+    public static void task4() {
+        /*TODO: please implement this method follow the description above.*/
+        long start = 0, finish = 0;
+        final int REPEATTIMES = 100;// this shows how many arrays are going to be generated.
+        System.out.println();
+        long heapRunningTimeSum;
+        long mergeRunningTimeSum;
+        long quickRunningTimeSum;
+        long quick2RunningTimeSum;
+        long quick3RunningTimeSum;
+        long quick4RunningTimeSum;
+        long quick5RunningTimeSum;
+        long naturalRunningTimeSum;
+
+        boolean quickSortIsFaster = false;
+        int kExchanges = 100;
+        int kDistance = 10;
+
+        long[] quickSortWorst = new long[5];
+        long[] everythingElseBest = new long[3];
+        // initialize size to 10,000,000 elements
+        //size = 10000000;
+        //size = 10; //testing numbers
+        size = 10000000; //testing numbers
+
+        // create array
+        arr = new int[size];
+        arrCopy = new int[size];
+        mergeArr = new int[size];
+        for (int j = 0; j < size; j++) arrCopy[j] = j + 1;
+
+
+
+        System.out.println("======== Task 4 ========");
+        for (int k = 1; k <= 2; k++) {
+            heapRunningTimeSum = 0;
+            mergeRunningTimeSum = 0;
+            quickRunningTimeSum = 0;
+            quick2RunningTimeSum = 0;
+            quick3RunningTimeSum = 0;
+            quick4RunningTimeSum = 0;
+            quick5RunningTimeSum = 0;
+            naturalRunningTimeSum = 0;
+            quickSortIsFaster = false;
+
+            while (!quickSortIsFaster) {
+
+
+
+                /*a title for tester to understand which part the program is at*/
+                switch (k) {
+                    case 1:
+                        System.out.println("======== k exchanges ========");
+                        System.out.format("The current k exchange is at: %d%n", kExchanges);
+                        System.out.println("calculating...");
+                        break;
+                    case 2:
+                        System.out.println("======== k distance ========");
+                        System.out.format("The current k distance is at: %d%n", kDistance);
+                        System.out.println("calculating...");
+                        break;
+                }
+                for (int i = 0; i < REPEATTIMES; i++) {
+                    // fill array
+                    switch (k) {
+                        case 1:
+                            //k exchanges
+                            randomGenerator = new Random();
+                            for (int a = 0; a < kExchanges / 2; a++) {
+                                random = size - 1;
+                                exchangeItemsArrCopy(randomGenerator.nextInt(random), randomGenerator.nextInt(random));
+                                //if two random numbers collide, that's fine.
+                            }
+                            break;
+                        case 2:
+                            //k distance
+                            randomGenerator = new Random();
+                            int startingPoint = (randomGenerator.nextInt(size - kDistance)); // make sure it's in range
+                            for (int a = 0; a < kDistance*1000 / 2; a++) {
+                                exchangeItemsArrCopy(startingPoint + randomGenerator.nextInt(kDistance),
+                                        startingPoint + randomGenerator.nextInt(kDistance));
+                            }
+                            break;
+                    }
+                    // heap sort
+                    System.arraycopy(arrCopy, 0, arr, 0, size);
+                    if (size < 101) printArray("in");
+                    start = System.currentTimeMillis();
+                    heapsort();
+                    finish = System.currentTimeMillis();
+                    if (size < 101) printArray("out");
+                    heapRunningTimeSum += (finish - start);
+                    // merge sort
+                    System.arraycopy(arrCopy, 0, arr, 0, size);
+                    if (size < 101) printArray("in");
+                    start = System.currentTimeMillis();
+                    mergeSort2(0, size); // mergeSort2 is faster from previous experiment
+                    finish = System.currentTimeMillis();
+                    if (size < 101) printArray("out");
+                    mergeRunningTimeSum += (finish - start);
+                    // Quick sort
+                    System.arraycopy(arrCopy, 0, arr, 0, size);
+                    if (size < 101) printArray("in");
+                    start = System.currentTimeMillis();
+                    quickSort(0, size - 1);
+                    finish = System.currentTimeMillis();
+                    if (size < 101) printArray("out");
+                    quickRunningTimeSum += (finish - start);
+                    // Quick sort 2
+                    System.arraycopy(arrCopy, 0, arr, 0, size);
+                    if (size < 101) printArray("in");
+                    start = System.currentTimeMillis();
+                    quickSort2(0, size - 1, 2);
+                    finish = System.currentTimeMillis();
+                    if (size < 101) printArray("out");
+                    quick2RunningTimeSum += (finish - start);
+                    // Quick sort 3
+                    System.arraycopy(arrCopy, 0, arr, 0, size);
+                    if (size < 101) printArray("in");
+                    start = System.currentTimeMillis();
+                    quickSort3(0, size - 1);
+                    finish = System.currentTimeMillis();
+                    if (size < 101) printArray("out");
+                    quick3RunningTimeSum += (finish - start);
+                    // Quick sort 4
+                    System.arraycopy(arrCopy, 0, arr, 0, size);
+                    if (size < 101) printArray("in");
+                    start = System.currentTimeMillis();
+                    quickSort2(0, size - 1, 4); // 4 means it picks three pivots then gets the best one (median)
+                    finish = System.currentTimeMillis();
+                    if (size < 101) printArray("out");
+                    quick4RunningTimeSum += (finish - start);
+                    // Quick sort 5
+                    System.arraycopy(arrCopy, 0, arr, 0, size);
+                    if (size < 101) printArray("in");
+                    start = System.currentTimeMillis();
+                    quickSort2(0, size - 1, 5); // 5 means it picks 9 pivots then gets the best one (median)
+                    finish = System.currentTimeMillis();
+                    if (size < 101) printArray("out");
+                    quick5RunningTimeSum += (finish - start);
+                    // Natural merge sort
+                    System.arraycopy(arrCopy, 0, arr, 0, size);
+                    if (size < 101) printArray("in");
+                    start = System.currentTimeMillis();
+                    naturalMergeSort();
+                    finish = System.currentTimeMillis();
+                    if (size < 101) printArray("out");
+                    naturalRunningTimeSum += (finish - start);
+                }
+                switch (k) {
+                    case 1:
+                        System.out.println
+                                ("heap sort on k exchanges input: " + heapRunningTimeSum + " milliseconds.");
+                        everythingElseBest[0] = heapRunningTimeSum;
+                        System.out.println
+                                ("merge sort on k exchanges input: " + mergeRunningTimeSum + " milliseconds.");
+                        everythingElseBest[1] = mergeRunningTimeSum;
+                        System.out.println
+                                ("quick sort on k exchanges input: " + quickRunningTimeSum + " milliseconds.");
+                        quickSortWorst[0] = quickRunningTimeSum;
+                        System.out.println
+                                ("quick sort 2 on k exchanges input: " + quick2RunningTimeSum + " milliseconds.");
+                        quickSortWorst[1] = quick2RunningTimeSum;
+                        System.out.println
+                                ("quick sort 3 on k exchanges input: " + quick3RunningTimeSum + " milliseconds.");
+                        quickSortWorst[2] = quick3RunningTimeSum;
+                        System.out.println
+                                ("quick sort 4 on k exchanges input: " + quick4RunningTimeSum + " milliseconds.");
+                        quickSortWorst[3] = quick4RunningTimeSum;
+                        System.out.println
+                                ("quick sort 5 on k exchanges input: " + quick5RunningTimeSum + " milliseconds.");
+                        quickSortWorst[4] = quick5RunningTimeSum;
+                        System.out.println
+                                ("natural merge sort on k exchanges input: " + naturalRunningTimeSum + " milliseconds.");
+                        everythingElseBest[2] = naturalRunningTimeSum;
+                        break;
+                    case 2:
+                        System.out.println
+                                ("heap sort on k distance arrays input: " + heapRunningTimeSum + " milliseconds.");
+                        System.out.println
+                                ("merge sort on k distance input: " + mergeRunningTimeSum + " milliseconds.");
+                        System.out.println
+                                ("quick sort on k distance input: " + quickRunningTimeSum + " milliseconds.");
+                        System.out.println
+                                ("quick sort 2 on k distance input: " + quick2RunningTimeSum + " milliseconds.");
+                        System.out.println
+                                ("quick sort 3 on k distance input: " + quick3RunningTimeSum + " milliseconds.");
+                        System.out.println
+                                ("quick sort 4 on k distance input: " + quick4RunningTimeSum + " milliseconds.");
+                        System.out.println
+                                ("quick sort 5 on k distance input: " + quick5RunningTimeSum + " milliseconds.");
+                        System.out.println
+                                ("natural merge sort on k distance input: " + naturalRunningTimeSum + " milliseconds.");
+                        break;
+                }
+                switch(k) {
+                    case 1:
+                        kExchanges += 100; // increment kForNearlySorted 100 ici.
+                        break;
+                    case 2:
+                        kDistance += 10;
+                }
+                // insertSort the sub-array arr[left, right]
+                for (int i = 0; i < 5; i++) {
+                    long temp = quickSortWorst[i];           // store a[i] in temp
+                    int j = i;                       // start shifts at i
+                    // until one is smaller,
+                    while (j > 0 && quickSortWorst[j - 1] >= temp) {
+                        quickSortWorst[j] = quickSortWorst[j - 1];        // shift item to right
+                        --j;                      // go left one position
+                    }
+                    quickSortWorst[j] = temp;              // insert stored item
+                }  // end for
+                for (int i = 0; i < 3; i++) {
+                    long temp = everythingElseBest[i];           // store a[i] in temp
+                    int j = i;                       // start shifts at i
+                    // until one is smaller,
+                    while (j > 0 && everythingElseBest[j - 1] >= temp) {
+                        everythingElseBest[j] = everythingElseBest[j - 1];        // shift item to right
+                        --j;                      // go left one position
+                    }
+                    everythingElseBest[j] = temp;              // insert stored item
+                }  // end for
+
+                if(everythingElseBest[0] > quickSortWorst[4]) quickSortIsFaster = true;
+                    // quickSort is faster by all means at k.
             }
         }
     }
@@ -624,7 +1132,9 @@ public class Sorting {
         demo2("nearly sorted");
         for(int i=0; i<size; i++) arrCopy[i] = size-i;
         demo1("reversely sorted");*/
-        task1("task 1");
-        task2("task 2");
+        //task1("task 1");
+        //task2();
+        //task3();
+        task4();
     }
 }
