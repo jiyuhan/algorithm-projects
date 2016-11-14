@@ -1132,9 +1132,9 @@ public class Sorting {
         demo2("nearly sorted");
         for(int i=0; i<size; i++) arrCopy[i] = size-i;
         demo1("reversely sorted");*/
-        //task1("task 1");
-        //task2();
-        //task3();
+        task1("task 1");
+        task2();
+        task3();
         task4();
     }
 }

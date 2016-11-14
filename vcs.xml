@@ -14,8 +14,12 @@
           <option name="url" value="http://github.com" />
           <option name="userName" value="jiyuhan" />
         </UrlAndUserName>
+        <UrlAndUserName>
+          <option name="url" value="https://github.com/jiyuhan/oral-exam-ii.git" />
+          <option name="userName" value="" />
+        </UrlAndUserName>
       </list>
     </option>
-    <option name="cloneParentDir" value="$USER_HOME$/Documents" />
+    <option name="cloneParentDir" value="$USER_HOME$/Desktop" />
   </component>
 </application>
